@@ -1,6 +1,5 @@
 package com.jayatech.wishlist.api.controller;
 
-import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.service.ProductService;
 import com.jayatech.wishlist.domain.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;

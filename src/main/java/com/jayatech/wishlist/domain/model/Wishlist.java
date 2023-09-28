@@ -1,28 +1,27 @@
 package com.jayatech.wishlist.domain.model;
 
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Data
 @Builder
-@Document(collection = "wishlist")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Wishlist {
 
     @Id
-    private Long id;
+    private String id;
 
-    private Long userId;
+    private String userId;
 
+    //TODO include the time with seconds
     private LocalDate updatedAt;
 
-    @DBRef
     private List<WishListItem> wishListItems;
 }
