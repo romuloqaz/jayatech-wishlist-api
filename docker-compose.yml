@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: jayatech
+      MONGO_INITDB_ROOT_PASSWORD: jayatech
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
