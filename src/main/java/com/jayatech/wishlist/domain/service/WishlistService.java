@@ -1,14 +1,12 @@
 package com.jayatech.wishlist.domain.service;
 
-import com.jayatech.wishlist.domain.exception.InternalErrorException;
-import com.jayatech.wishlist.domain.exception.RegisteredProductException;
-import com.jayatech.wishlist.domain.exception.ResourceNotFoundException;
-import com.jayatech.wishlist.domain.exception.WishListMaxSizeException;
+import com.jayatech.wishlist.domain.exception.*;
 import com.jayatech.wishlist.domain.model.Product;
 import com.jayatech.wishlist.domain.model.WishListItem;
 import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.model.dto.ProductCheckResponse;
-import com.jayatech.wishlist.domain.repository.WishListRepository;
+import com.jayatech.wishlist.domain.model.dto.ProductDTO;
+import com.jayatech.wishlist.domain.repository.WishlistRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,26 +16,25 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class WishListService {
+public class WishlistService {
 
     public static final String WISHLIST_NOT_FOUND_EXCEPTION_MESSAGE = Wishlist.class.getName() +".not.found";
     public static final String REGISTERED_PRODUCT_EXCEPTION_MESSAGE = Product.class.getName() +".registered";
     public static final String WISHLIST_MAX_SIZE_EXCEPTION_MESSAGE = Wishlist.class.getName() +".maximum.size";
+    public static final String WISHLIST_FOUND_EXCEPTION_MESSAGE = Wishlist.class.getName() +".found";
     private static final int WISHLIST_MAX_SIZE = 20;
 
-    private final WishListRepository wishListRepository;
+    private final WishlistRepository wishListRepository;
 
     @Autowired
-    public WishListService(WishListRepository wishListRepository) {
+    public WishlistService(WishlistRepository wishListRepository) {
         this.wishListRepository = wishListRepository;
     }
 
-    public Wishlist findByUserId(String userId) {
-        return wishListRepository.findByUserId(userId).orElseGet(() ->
-                this.saveWishList(userId));
-    }
-
     public Wishlist saveWishList(String userId) {
+        if(wishListRepository.findByUserId(userId) != null) {
+            throw new WishlistFoundException(WISHLIST_FOUND_EXCEPTION_MESSAGE);
+        }
         try {
             return wishListRepository.save(Wishlist.builder()
                     .userId(userId)
@@ -49,15 +46,21 @@ public class WishListService {
             throw new InternalErrorException(e.getMessage(), e.getCause());
         }
     }
+
     //TODO order by date
     //TODO search if product in the wishlist by name
-
-    public Wishlist findById(String id) {
-        return wishListRepository.findById(id).orElseThrow(() ->
+    public Wishlist findById(String wishlistId) {
+        return wishListRepository.findById(wishlistId).orElseThrow(() ->
                 new ResourceNotFoundException(WISHLIST_NOT_FOUND_EXCEPTION_MESSAGE));
     }
 
-    public Wishlist updateWishList (Wishlist wishlist, Product product){
+    public Wishlist updateWishList (Wishlist wishlist, ProductDTO productDTO){
+        Product product = Product.builder()
+                .id(productDTO.getId())
+                .name(productDTO.getName())
+                .description(productDTO.getDescription())
+                .price(productDTO.getPrice())
+                .build();
        this.validateProduct(wishlist, product.getId());
         wishlist.getWishListItems().add(WishListItem.builder()
                     .id(UUID.randomUUID().toString())
@@ -115,7 +118,7 @@ public class WishListService {
             throw new RegisteredProductException(REGISTERED_PRODUCT_EXCEPTION_MESSAGE);
         }
         if(wishlist.getWishListItems().size() == WISHLIST_MAX_SIZE) {
-            throw new WishListMaxSizeException(WISHLIST_MAX_SIZE_EXCEPTION_MESSAGE);
+            throw new WishlistMaxSizeException(WISHLIST_MAX_SIZE_EXCEPTION_MESSAGE);
         }
     }
 }
