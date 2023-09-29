@@ -1,8 +1,11 @@
 package com.jayatech.wishlist.controller;
 
+import com.jayatech.wishlist.domain.exception.ResourceNotFoundException;
 import com.jayatech.wishlist.domain.model.Product;
+import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.service.ProductService;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -17,14 +20,13 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.doReturn;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.doThrow;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-
 class ProductsControllerIntegrationTest {
 
     @Autowired
@@ -35,6 +37,7 @@ class ProductsControllerIntegrationTest {
 
     @Test
     @SneakyThrows
+    @DisplayName("Should return  products return status 200 OK")
     void products() {
         mvc.perform(MockMvcRequestBuilders.get("/products"))
                 .andDo(MockMvcResultHandlers.print())
@@ -43,7 +46,8 @@ class ProductsControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    void products_stubbed() {
+    @DisplayName("Should return a list of products return status 200 OK")
+    void products_listed() {
         doReturn(
                 Arrays.asList(Product.builder()
                         .id("100")
@@ -74,11 +78,11 @@ class ProductsControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    void products_stubbed2() {
+    @DisplayName("Should return a product's empty list and status 200 OK")
+    void products_empty() {
         doReturn(
                 Collections.emptyList()
         ).when(productService).findAll();
-
         mvc.perform(MockMvcRequestBuilders.get("/products"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(0)));
@@ -87,17 +91,41 @@ class ProductsControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    void product_by_id() {
+    @DisplayName("Should return a status 404 not found")
+    void product_by_id_not_found() {
         mvc.perform(MockMvcRequestBuilders.get("/products/100"))
                 .andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk());
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @SneakyThrows
+    @DisplayName("Should return ResourceNotFoundException and status 404 not found")
+    void product_by_id_not_found_exception() {
+        doThrow(new ResourceNotFoundException(Wishlist.class.getName() +".not.found")).when(productService).findById("100");
+        mvc.perform(MockMvcRequestBuilders.get("/v1/patient/100"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
     @SneakyThrows
-    void products_stubbed_ok() {
-        doReturn(null).when(productService).findById("100");
+    @DisplayName("Should return a product and status 200 OK")
+    void product_by_id() {
+        doReturn(Product.builder()
+                                .id("100")
+                                .name("product test")
+                                .price(BigDecimal.valueOf(12.45))
+                                .description("product test")
+                                .build()
+        ).when(productService).findById("100");
+
         mvc.perform(MockMvcRequestBuilders.get("/products/100"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id", equalTo("100")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name", equalTo("product test")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.price", equalTo(12.45)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.description", equalTo("product test")));
     }
 }
