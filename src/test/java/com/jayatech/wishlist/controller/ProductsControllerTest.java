@@ -38,9 +38,9 @@ class ProductsControllerTest {
 
     @Test
     void getProductId() {
-        Optional<Product> product = Optional.of(new Product());
+        Product product = new Product();
         when(productService.findById("1")).thenReturn(product);
-        ResponseEntity<Optional<Product>> responseEntity = productController.getProductById("1");
+        ResponseEntity<Product> responseEntity = productController.getProductById("1");
         verify(productService).findById("1");
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         assertSame(product, responseEntity.getBody());
