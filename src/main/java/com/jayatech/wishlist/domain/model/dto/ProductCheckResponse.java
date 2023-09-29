@@ -9,15 +9,17 @@ public class ProductCheckResponse {
     private Product product;
     private boolean hasProductInWishlist;
     private String message;
+    public static final String PRODUCT_NOT_FOUND = "product.not.found";
+    public static final String PRODUCT_FOUND = "product.found";
 
     public ProductCheckResponse() {
         this.hasProductInWishlist = false;
-        this.message = "product.not.found";
+        this.message = PRODUCT_NOT_FOUND;
     }
 
     public ProductCheckResponse(Product product) {
         this.product = product;
         this.hasProductInWishlist = true;
-        this.message = "product.found";
+        this.message = PRODUCT_FOUND;
     }
 }
