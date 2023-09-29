@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -24,7 +23,7 @@ public class WishListService {
     public static final String WISHLIST_NOT_FOUND_EXCEPTION_MESSAGE = Wishlist.class.getName() +".not.found";
     public static final String REGISTERED_PRODUCT_EXCEPTION_MESSAGE = Product.class.getName() +".registered";
     public static final String WISHLIST_MAX_SIZE_EXCEPTION_MESSAGE = Wishlist.class.getName() +".maximum.size";
-    private static final int WISHLIST_MAX_SIZE = 3;
+    private static final int WISHLIST_MAX_SIZE = 20;
 
     private final WishListRepository wishListRepository;
 
@@ -50,9 +49,10 @@ public class WishListService {
             throw new InternalErrorException(e.getMessage(), e.getCause());
         }
     }
+    //TODO order by date
+    //TODO search if product in the wishlist by name
 
     public Wishlist findById(String id) {
-        //TODO order by date
         return wishListRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(WISHLIST_NOT_FOUND_EXCEPTION_MESSAGE));
     }
@@ -61,7 +61,7 @@ public class WishListService {
        this.validateProduct(wishlist, product.getId());
         wishlist.getWishListItems().add(WishListItem.builder()
                     .id(UUID.randomUUID().toString())
-                    .updatedAt(Instant.now())
+                    .createdAt(Instant.now())
                     .product(product)
                 .build());
         wishlist.setUpdatedAt(Instant.now());

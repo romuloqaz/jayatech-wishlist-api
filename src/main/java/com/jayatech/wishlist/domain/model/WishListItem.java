@@ -14,7 +14,7 @@ public class WishListItem {
     @Id
     private String id;
 
-    private Instant updatedAt;
+    private Instant createdAt;
 
     @DBRef
     private Product product;
