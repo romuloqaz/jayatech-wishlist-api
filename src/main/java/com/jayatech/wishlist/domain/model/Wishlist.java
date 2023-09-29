@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -20,8 +20,9 @@ public class Wishlist {
 
     private String userId;
 
-    //TODO include the time with seconds
-    private LocalDate updatedAt;
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     private List<WishListItem> wishListItems;
 }
