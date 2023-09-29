@@ -29,9 +29,4 @@ public class ProductService {
     public Product findById(String id) {
         return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_EXCEPTION_MESSAGE));
     }
-
-    //Remove that later
-    public Product insert (Product product){
-        return productRepository.save(product);
-    }
 }
