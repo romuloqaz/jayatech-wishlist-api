@@ -29,8 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -65,72 +64,45 @@ class WishlistControllerIntegrationTest {
     }
 
     @Test
-    @Disabled
-    @DisplayName("Registering a game successfully")
-    void postGameOK() throws Exception {
-        UserDTO request = UserDTO.builder()
-                .id("userIdtest")
-                .build();
-
-        System.out.println(asJsonString(request.getId()));
+    @SneakyThrows
+    void postWishlistException_userIdNull() throws Exception {
+        UserDTO request = UserDTO.builder().id(null).build();
+        mvc.perform(post(URL_WISHLIST).contentType(MediaType.APPLICATION_JSON).content
+                (asJsonString(request.getId()))).andExpect(status().isBadRequest());
     }
 
     @Test
-    @DisplayName("Registering game with empty object")
-    void postGameValidationException() throws Exception {
-        UserDTO request = UserDTO.builder()
-                .id(null)
-                .build();
-        mvc.perform(post(URL_WISHLIST)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(request.getId())))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    @DisplayName("Registering game with empty object")
-    void postGameException() throws Exception {
-        doThrow(new InternalErrorException(InternalErrorException.EXCEPTION_MESSAGE)).when(wishlistService).saveWishList("userIdtest");
-
-        UserDTO request = UserDTO.builder()
-                .id("userIdtest")
-                .build();
-        mvc.perform(post(URL_WISHLIST)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(request.getId())))
-                .andExpect(jsonPath("$.error", is(InternalErrorException.EXCEPTION_MESSAGE)))
+    @SneakyThrows
+    void postWishlistException_internalError() throws Exception {
+        doThrow(new InternalErrorException(InternalErrorException.EXCEPTION_MESSAGE))
+                .when(wishlistService).saveWishList("userIdtest");
+        UserDTO request = UserDTO.builder().id("userIdtest").build();
+        mvc.perform(post(URL_WISHLIST).contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(request.getId()))).andExpect(jsonPath(
+                        "$.error", is(InternalErrorException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     @SneakyThrows
-    @DisplayName("Should return a list of products return status 200 OK")
-    void products_listed() {
+    void getWishlist() {
         String wishlistId = "wishlistId";
         String userId = "userid1";
         String wishlistItemId = "wishListItemId";
-        Wishlist wishlist = Wishlist.builder()
-                .id(wishlistId)
-                .userId(userId)
-                .createdAt(instant)
-                .updatedAt(instant)
-                .wishListItems(Collections.singletonList(WishListItem.builder()
-                        .id(wishlistItemId)
-                        .createdAt(instant)
-                        .product(Product.builder()
-                                .id("productId")
-                                .name("product name test")
-                                .price(BigDecimal.valueOf(11.5))
-                                .description("product test description")
-                                .build())
-                        .build()))
+        Wishlist wishlist = Wishlist.builder().id(wishlistId).userId(userId)
+                .createdAt(instant).updatedAt(instant).wishListItems(Collections
+                        .singletonList(WishListItem.builder().id(wishlistItemId)
+                                .createdAt(instant).product(Product.builder()
+                                        .id("productId").name("product name test")
+                                        .price(BigDecimal.valueOf(11.5))
+                                        .description("product test description")
+                                        .build())
+                                .build()))
                 .build();
-        doReturn(
-                wishlist
-        ).when(wishlistService).findById(wishlistId);
-
-        mvc.perform(MockMvcRequestBuilders.get(URL_WISHLIST+"/{wishlistId}", wishlistId))
-                .andExpect(status().isOk())
+        doReturn(wishlist).when(wishlistService).findById(wishlistId);
+        mvc.perform(MockMvcRequestBuilders.get(URL_WISHLIST + "/{wishlistId}",
+                        wishlistId)).
+                andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(5)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", equalTo(wishlistId)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId", equalTo(userId)))
@@ -146,19 +118,17 @@ class WishlistControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Should return a list of products return status 200 OK")
-    void getWishListNotFound()  {
+    void getWishList_notFound() {
         String wishlistId = "wishlistId";
-        doThrow(new ResourceNotFoundException(ResourceNotFoundException.EXCEPTION_MESSAGE)).when(wishlistService).findById("wishlistId");
-        mvc.perform(get(URL_WISHLIST+"/{wishlistId}", wishlistId)
-                        .contentType(MediaType.APPLICATION_JSON))
+        doThrow(new ResourceNotFoundException(ResourceNotFoundException.EXCEPTION_MESSAGE))
+                .when(wishlistService).findById("wishlistId");
+        mvc.perform(get(URL_WISHLIST + "/{wishlistId}", wishlistId).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error", is(ResourceNotFoundException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @SneakyThrows
-    @DisplayName("Should return a list of products return status 200 OK")
     void check_products() {
         String wishlistId = "wishlistId";
         String userId = "userid1";
@@ -172,19 +142,17 @@ class WishlistControllerIntegrationTest {
                 .build();
 
         Wishlist wishlist = Wishlist.builder()
-                .id(wishlistId)
-                .userId(userId)
+                .id(wishlistId).userId(userId)
                 .createdAt(instant)
                 .updatedAt(instant)
                 .wishListItems(Collections.singletonList(WishListItem.builder()
                         .id(wishlistItemId)
                         .createdAt(instant)
-                        .product(product)
-                        .build()))
+                        .product(product).build()))
                 .build();
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
         doReturn(new ProductCheckResponse(product)).when(wishlistService).checkProduct(wishlist, product.getId());
-        mvc.perform(MockMvcRequestBuilders.get(URL_WISHLIST+"/{wishlistId}/check/{productId}", wishlistId, productId))
+        mvc.perform(MockMvcRequestBuilders.get(URL_WISHLIST + "/{wishlistId}/check/{productId}", wishlistId, productId))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.hasProductInWishlist", equalTo(true)))
@@ -197,8 +165,6 @@ class WishlistControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    @DisplayName("Should return a list of products return status 200 OK")
-    @Disabled
     void check_products_not_found() {
         String wishlistId = "wishlistId";
         String productId = "productId";
@@ -211,9 +177,8 @@ class WishlistControllerIntegrationTest {
                 .build();
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
         doReturn(new ProductCheckResponse()).when(wishlistService).checkProduct(wishlist, productId);
-        mvc.perform(MockMvcRequestBuilders.get(URL_WISHLIST+"/{wishlistId}/check/{productId}", wishlistId, productId))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(3)))
+        mvc.perform(MockMvcRequestBuilders.get(URL_WISHLIST + "/{wishlistId}/check/{productId}", wishlistId, productId))
+                .andExpect(status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.hasProductInWishlist", equalTo(false)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.message", equalTo("product.not.found")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.product", equalTo(null)));
@@ -243,10 +208,8 @@ class WishlistControllerIntegrationTest {
                 .createdAt(instant)
                 .updatedAt(instant)
                 .wishListItems(Collections.singletonList(WishListItem.builder()
-                        .id("wishlistItemId")
-                        .createdAt(instant)
-                        .product(Product.builder()
-                                .id("productId")
+                        .id("wishlistItemId").createdAt(instant)
+                        .product(Product.builder().id("productId")
                                 .name("product test")
                                 .price(BigDecimal.valueOf(11.5))
                                 .description("product test description")
@@ -256,11 +219,10 @@ class WishlistControllerIntegrationTest {
 
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
         doReturn(updatedWishlist).when(wishlistService).updateWishList(wishlist, productDTO);
-        mvc.perform(post(URL_WISHLIST+"/wishlistId/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(productDTO)))
-                .andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(5)))
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(productDTO)))
+                .andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(5)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", equalTo(wishlistId)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId", equalTo("userId")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt", equalTo("2021-09-29T09:20:00Z")))
@@ -274,6 +236,7 @@ class WishlistControllerIntegrationTest {
     }
 
     @Test
+    @SneakyThrows
     void incrementWishlist_registered_Product() throws Exception {
         String wishlistId = "wishlistId";
 
@@ -301,245 +264,59 @@ class WishlistControllerIntegrationTest {
                 .build();
 
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
-        doThrow(new RegisteredProductException(RegisteredProductException.EXCEPTION_MESSAGE)).when(wishlistService).updateWishList(wishlist, productDTO);
-        mvc.perform(post(URL_WISHLIST+"/wishlistId/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(productDTO)))
+        doThrow(new RegisteredProductException(RegisteredProductException.EXCEPTION_MESSAGE))
+                .when(wishlistService).updateWishList(wishlist, productDTO);
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items")
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(productDTO)))
                 .andExpect(jsonPath("$.error", is(RegisteredProductException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
+    @SneakyThrows
     void incrementWishlist_max_size() throws Exception {
         String wishlistId = "wishlistId";
-        String productId = "productId";
         ProductDTO productDTO = new ProductDTO();
         productDTO.setId("productId");
         productDTO.setName("product test");
         productDTO.setPrice(BigDecimal.valueOf(11.5));
         productDTO.setDescription("product test description");
 
+        List<WishListItem> items = new ArrayList<>();
+        for (int i = 0; i < WishlistService.WISHLIST_MAX_SIZE; i++) {
+            items.add(WishListItem.builder()
+                    .id(UUID.randomUUID().toString())
+                    .createdAt(Instant.now())
+                    .product(Product.builder()
+                            .id("productId" + i)
+                            .name("product name" + i)
+                            .description("product description" + i)
+                            .price(BigDecimal.valueOf(10.0 + i))
+                            .build())
+                    .build());
+        }
+
         Wishlist wishlist = Wishlist.builder()
-                .id(wishlistId)
-                .userId("userId1")
+                .id("wishlistId")
+                .userId("userId")
                 .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .wishListItems(Arrays.asList(WishListItem.builder()
-                                .id("wishListItemId1")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId2")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId3")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId4")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId5")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId6")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId7")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId8")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId9")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId10")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId11")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId12")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId13")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId14")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId15")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId16")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId17")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId18")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId19")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId20")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build()
-                ))
+                .updatedAt(null)
+                .wishListItems(items)
                 .build();
 
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
-        doThrow(new WishlistMaxSizeException(WishlistMaxSizeException.EXCEPTION_MESSAGE)).when(wishlistService).updateWishList(wishlist, productDTO);
-        mvc.perform(post(URL_WISHLIST+"/wishlistId/items")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(productDTO)))
+        doThrow(new WishlistMaxSizeException(WishlistMaxSizeException.EXCEPTION_MESSAGE)).
+                when(wishlistService).updateWishList(wishlist, productDTO);
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items").
+                contentType(MediaType.APPLICATION_JSON).content(asJsonString(productDTO)))
                 .andExpect(jsonPath("$.error", is(WishlistMaxSizeException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isBadRequest());
     }
 
 
     @Test
-    @DisplayName("Should create a wishlist")
-    void deleteProduct() throws Exception {
+    @SneakyThrows
+    void deleteProduct()  {
         String wishlistId = "wishlistId";
         String userId = "userid1";
         String itemId = "itemId";
@@ -559,15 +336,13 @@ class WishlistControllerIntegrationTest {
                                 .build())
                         .build()))
                 .build();
-
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
         doNothing().when(wishlistService).removeWishListProduct(wishlist, itemId);
-        mvc.perform(delete(URL_WISHLIST+"/{wishlistId}/items/{itemId}", wishlistId, itemId )
-                        .contentType(MediaType.APPLICATION_JSON));
+        mvc.perform(delete(URL_WISHLIST + "/{wishlistId}/items/{itemId}", wishlistId, itemId).contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    @DisplayName("Should create a wishlist")
+    @SneakyThrows
     void deleteProduct_not_found() throws Exception {
         String wishlistId = "wishlistId";
         String userId = "userid1";
@@ -588,12 +363,11 @@ class WishlistControllerIntegrationTest {
                                 .build())
                         .build()))
                 .build();
-
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
-
-        doThrow(new ResourceNotFoundException(WishlistMaxSizeException.EXCEPTION_MESSAGE)).when(wishlistService).removeWishListProduct(wishlist, itemId);
-        mvc.perform(delete(URL_WISHLIST+"/{wishlistId}/items/{itemId}", wishlistId, itemId )
-                        .contentType(MediaType.APPLICATION_JSON))
+        doThrow(new ResourceNotFoundException(WishlistMaxSizeException.EXCEPTION_MESSAGE))
+                .when(wishlistService).removeWishListProduct(wishlist, itemId);
+        mvc.perform(delete(URL_WISHLIST + "/{wishlistId}/items/{itemId}", wishlistId, itemId)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.error", is(ResourceNotFoundException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isNotFound());
     }

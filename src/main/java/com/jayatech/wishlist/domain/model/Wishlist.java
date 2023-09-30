@@ -17,12 +17,8 @@ public class Wishlist {
 
     @Id
     private String id;
-
     private String userId;
-
     private Instant createdAt;
-
     private Instant updatedAt;
-
     private List<WishListItem> wishListItems;
 }

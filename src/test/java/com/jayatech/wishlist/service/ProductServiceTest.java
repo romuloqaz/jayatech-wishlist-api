@@ -4,6 +4,7 @@ import com.jayatech.wishlist.domain.exception.ResourceNotFoundException;
 import com.jayatech.wishlist.domain.model.Product;
 import com.jayatech.wishlist.domain.repository.ProductRepository;
 import com.jayatech.wishlist.domain.service.ProductService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,14 +31,15 @@ class ProductServiceTest {
     private ProductRepository productRepository;
 
     @Test
-    void getProductId_ProductFound() {
+    @DisplayName("Should get a product by Id")
+    void getProduct_byId() {
         String id = "1";
         Product product = Product.builder()
-                        .id(id)
-                        .name("product test 1")
-                        .price(BigDecimal.valueOf(12.5))
-                        .description("product description 1")
-                        .build();
+                .id(id)
+                .name("product test 1")
+                .price(BigDecimal.valueOf(12.5))
+                .description("product description 1")
+                .build();
         when(productRepository.findById(id)).thenReturn(Optional.of(product));
         Product result = productService.findById(id);
         assertEquals(product, result);
@@ -45,21 +47,21 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("Should throw product not found")
     void getProductId_ProductNotFound() {
         String id = "2";
         when(productRepository.findById(id)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () ->
-            productService.findById(id)
-        );
+        assertThrows(ResourceNotFoundException.class, () -> productService.findById(id));
     }
 
     @Test
+    @DisplayName("Should get all products")
     void getAllProducts() {
         List<Product> products = Arrays.asList(Product.builder()
-                        .id("100")
-                        .name("product test")
-                        .price(BigDecimal.valueOf(12.45))
-                        .description("product test")
+                .id("100")
+                .name("product test")
+                .price(BigDecimal.valueOf(12.45))
+                .description("product test")
                         .build(),
                 Product.builder()
                         .id("101")
@@ -75,7 +77,8 @@ class ProductServiceTest {
     }
 
     @Test
-    void getAllProducts_empty_list() {
+    @DisplayName("Should retrieve empty list of products")
+    void getAllProducts_emptyList() {
         when(productRepository.findAll()).thenReturn(new ArrayList<>());
         List<Product> products = productService.findAll();
 

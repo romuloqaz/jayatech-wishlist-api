@@ -1,12 +1,10 @@
 package com.jayatech.wishlist.domain.exception;
 
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
-@Setter
 public class StandardError implements Serializable {
     private static final long serialVersionUID = 1L;
 

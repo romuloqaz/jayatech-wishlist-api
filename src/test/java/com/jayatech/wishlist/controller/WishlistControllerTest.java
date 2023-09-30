@@ -22,8 +22,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -42,9 +41,7 @@ class WishlistControllerTest {
     void create_wishlist() {
         String id = "wishlistID";
         String userId = "userid1";
-        UserDTO userDTO = UserDTO.builder()
-                .id(userId)
-                .build();
+        UserDTO userDTO = UserDTO.builder().id(userId).build();
         Wishlist wishlist = Wishlist.builder()
                 .id(id)
                 .userId("userId1")
@@ -64,8 +61,7 @@ class WishlistControllerTest {
     void getProductId() {
         String wishlisId = "wishlistId";
         Wishlist wishlist = Wishlist.builder()
-                .id(wishlisId)
-                .userId("userId1")
+                .id(wishlisId).userId("userId1")
                 .createdAt(Instant.now())
                 .updatedAt(null)
                 .wishListItems(Collections.emptyList())
@@ -109,9 +105,7 @@ class WishlistControllerTest {
     void getProductId_ProductNotFound() {
         String id = "wishlistId";
         when(wishlistService.findById(id)).thenThrow(ResourceNotFoundException.class);
-        assertThrows(ResourceNotFoundException.class, () ->
-                wishListController.getWishList(id)
-        );
+        assertThrows(ResourceNotFoundException.class, () -> wishListController.getWishList(id));
         verify(wishlistService).findById(id);
     }
 
@@ -130,8 +124,8 @@ class WishlistControllerTest {
                 .userId("userId1")
                 .createdAt(Instant.now())
                 .updatedAt(null)
-                .wishListItems(Collections.singletonList(WishListItem.builder()
-                        .id("wishListItemId")
+                .wishListItems(Collections.singletonList(WishListItem.builder().
+                        id("wishListItemId")
                         .createdAt(Instant.now())
                         .product(product)
                         .build()))
@@ -187,8 +181,8 @@ class WishlistControllerTest {
                 .id(wishlistId)
                 .userId("userId1")
                 .createdAt(Instant.now())
-                .updatedAt(null)
-                .wishListItems(Collections.emptyList())
+                .updatedAt(null).
+                wishListItems(Collections.emptyList())
                 .build();
 
         Wishlist wishlistUpdated = Wishlist.builder()
@@ -233,17 +227,14 @@ class WishlistControllerTest {
                         .build()))
                 .build();
         ProductDTO productDTO = ProductDTO.builder()
-                .id(productId)
-                .name("product name test")
+                .id(productId).name("product name test")
                 .price(BigDecimal.valueOf(11.5))
                 .description("product test description")
                 .build();
         when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
         when(wishlistService.updateWishList(wishlist, productDTO)).thenThrow(RegisteredProductException.class);
 
-        assertThrows(RegisteredProductException.class, () ->
-                wishListController.incrementWishlist(wishlistId, productDTO)
-        );
+        assertThrows(RegisteredProductException.class, () -> wishListController.incrementWishlist(wishlistId, productDTO));
         verify(wishlistService).findById(wishlistId);
         verify(wishlistService).updateWishList(wishlist, productDTO);
     }
@@ -253,212 +244,26 @@ class WishlistControllerTest {
     void incrementWishList_max_size() {
         String wishlistId = "wishlistId";
         String productId = "productId";
+        List<WishListItem> items = new ArrayList<>();
+        for (int i = 0; i < WishlistService.WISHLIST_MAX_SIZE; i++) {
+            items.add(WishListItem.builder()
+                    .id(UUID.randomUUID().toString())
+                    .createdAt(Instant.now())
+                    .product(Product.builder()
+                            .id("productId" + i)
+                            .name("product name" + i)
+                            .description("product description" + i)
+                            .price(BigDecimal.valueOf(10.0 + i))
+                            .build())
+                    .build());
+        }
+
         Wishlist wishlist = Wishlist.builder()
-                .id(wishlistId)
-                .userId("userId1")
+                .id("wishlistId")
+                .userId("userId")
                 .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .wishListItems(Arrays.asList(WishListItem.builder()
-                        .id("wishListItemId1")
-                        .createdAt(Instant.now())
-                        .product(Product.builder()
-                                .id(productId)
-                                .name("product name test")
-                                .price(BigDecimal.valueOf(11.5))
-                                .description("product test description")
-                                .build())
-                        .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId2")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId3")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId4")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId5")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId6")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId7")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId8")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId9")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId10")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId11")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId12")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId13")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId14")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId15")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId16")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId17")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId18")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId19")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build(),
-                        WishListItem.builder()
-                                .id("wishListItemId20")
-                                .createdAt(Instant.now())
-                                .product(Product.builder()
-                                        .id(productId)
-                                        .name("product name test")
-                                        .price(BigDecimal.valueOf(11.5))
-                                        .description("product test description")
-                                        .build())
-                                .build()
-                        ))
+                .updatedAt(null)
+                .wishListItems(items)
                 .build();
         ProductDTO productDTO = ProductDTO.builder()
                 .id(productId)
@@ -469,9 +274,7 @@ class WishlistControllerTest {
         when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
         when(wishlistService.updateWishList(wishlist, productDTO)).thenThrow(WishlistMaxSizeException.class);
 
-        assertThrows(WishlistMaxSizeException.class, () ->
-                wishListController.incrementWishlist(wishlistId, productDTO)
-        );
+        assertThrows(WishlistMaxSizeException.class, () -> wishListController.incrementWishlist(wishlistId, productDTO));
         verify(wishlistService).findById(wishlistId);
         verify(wishlistService).updateWishList(wishlist, productDTO);
     }
@@ -520,8 +323,7 @@ class WishlistControllerTest {
                         .name("product name test")
                         .price(BigDecimal.valueOf(11.5))
                         .description("product test description")
-                        .build())
-                .build();
+                        .build()).build();
         Wishlist wishlist = Wishlist.builder()
                 .id(wishlistId)
                 .userId(userId)
@@ -532,9 +334,7 @@ class WishlistControllerTest {
 
         when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
         doThrow(ResourceNotFoundException.class).when(wishlistService).removeWishListProduct(wishlist, wishlistItemId);
-        assertThrows(ResourceNotFoundException.class, () ->
-            wishListController.deleteProductWishList(wishlistId, wishlistItemId)
-            );
+        assertThrows(ResourceNotFoundException.class, () -> wishListController.deleteProductWishList(wishlistId, wishlistItemId));
         verify(wishlistService).findById(wishlistId);
         verify(wishlistService, times(1)).removeWishListProduct(wishlist, wishlistItemId);
     }

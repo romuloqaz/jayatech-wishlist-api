@@ -31,14 +31,12 @@ class ProductsControllerTest {
 
     @AfterEach
     public void afterEach() {
-        verifyNoMoreInteractions(
-                productService
-        );
+        verifyNoMoreInteractions(productService);
     }
 
     @Test
     @DisplayName("Should get product by Id")
-    void getProductId() {
+    void getProductById() {
         String id = "1";
         Product product = new Product();
         when(productService.findById(id)).thenReturn(product);
@@ -50,12 +48,10 @@ class ProductsControllerTest {
 
     @Test
     @DisplayName("Should throw a not found exception")
-    void getProductId_ProductNotFound() {
+    void getProductById_ProductNotFound() {
         String id = "2";
         when(productService.findById(id)).thenThrow(ResourceNotFoundException.class);
-        assertThrows(ResourceNotFoundException.class, () ->
-            productController.getProductById(id)
-        );
+        assertThrows(ResourceNotFoundException.class, () -> productController.getProductById(id));
         verify(productService).findById(id);
     }
 

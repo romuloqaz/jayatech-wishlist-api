@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 public class ProductService {
 
-    public static final String PRODUCT_NOT_FOUND_EXCEPTION_MESSAGE = Product.class.getName() +".not.found";
+    public static final String PRODUCT_NOT_FOUND_EXCEPTION_MESSAGE = Product.class.getName() + ".not.found";
 
     private final ProductRepository productRepository;
 
@@ -27,6 +27,7 @@ public class ProductService {
     }
 
     public Product findById(String id) {
-        return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(PRODUCT_NOT_FOUND_EXCEPTION_MESSAGE));
+        return productRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException(PRODUCT_NOT_FOUND_EXCEPTION_MESSAGE));
     }
 }
