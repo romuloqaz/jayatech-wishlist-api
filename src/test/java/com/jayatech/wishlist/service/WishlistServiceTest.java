@@ -8,8 +8,8 @@ import com.jayatech.wishlist.domain.model.Product;
 import com.jayatech.wishlist.domain.model.WishListItem;
 import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.model.dto.ProductCheckResponse;
-import com.jayatech.wishlist.domain.model.dto.ProductDTO;
 import com.jayatech.wishlist.domain.repository.WishlistRepository;
+import com.jayatech.wishlist.domain.service.ProductService;
 import com.jayatech.wishlist.domain.service.WishlistService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +35,9 @@ class WishlistServiceTest {
 
     @Mock
     private WishlistRepository wishlistRepository;
+
+    @Mock
+    private ProductService productService;
 
     @Test
     @DisplayName("Should create a wishlist")
@@ -97,7 +100,6 @@ class WishlistServiceTest {
     @DisplayName("Should throw wishlist not found exception")
     void getWishlistByUserId_notFound() {
         String id = "wishlistId";
-        String userId = "userid1test";
         when(wishlistRepository.findById(id)).thenReturn(Optional.empty());
         Optional<Wishlist> wishlist = wishlistRepository.findById(id);
         assertEquals(wishlist, Optional.empty());
@@ -109,6 +111,13 @@ class WishlistServiceTest {
     @DisplayName("Should insert a wishlistItem in a wishlist")
     void updateWishList() {
         String userId = "userId";
+        String productId = "productId";
+        Product product = Product.builder()
+                .id(productId)
+                .name("product name" )
+                .description("product description")
+                .price(BigDecimal.valueOf(10.0))
+                .build();
         Wishlist wishlist = Wishlist.builder()
                 .id("wishlistId")
                 .userId(userId)
@@ -116,20 +125,14 @@ class WishlistServiceTest {
                 .updatedAt(null)
                 .wishListItems(new ArrayList<>())
                 .build();
-
-        ProductDTO productDTO = ProductDTO.builder()
-                .id("productId")
-                .name("product name")
-                .description("product description")
-                .price(BigDecimal.valueOf(10.0))
-                .build();
-
+        when(productService.findById(productId)).thenReturn(product);
         when(wishlistRepository.save(any(Wishlist.class))).thenReturn(wishlist);
-        Wishlist updatedWishlist = wishlistService.updateWishList(wishlist, productDTO);
+        Wishlist updatedWishlist = wishlistService.updateWishList(wishlist, productId);
         verify(wishlistRepository).save(any(Wishlist.class));
-        assertEquals(wishlist, updatedWishlist);
+        assertEquals(product, updatedWishlist.getWishListItems().get(0).getProduct());
+        System.out.println(updatedWishlist.getWishListItems().get(0).getProduct());
         assertEquals(1, updatedWishlist.getWishListItems().size());
-        assertEquals(productDTO.getId(), updatedWishlist.getWishListItems().get(0)
+        assertEquals(productId, updatedWishlist.getWishListItems().get(0)
                 .getProduct().getId());
         assertNotNull(wishlist.getUpdatedAt());
     }
@@ -137,22 +140,61 @@ class WishlistServiceTest {
     @Test
     @DisplayName("Should throw registered product exception when insert duplicated product")
     void updateWishlist_duplicateProduct() {
-        Wishlist wishlist = Wishlist.builder().id("wishlistId").userId("userId").createdAt(Instant.now()).updatedAt(null).wishListItems(Collections.singletonList(WishListItem.builder().id("wishListItemId").createdAt(Instant.now()).product(Product.builder().id("productId").name("product name").description("product description").price(BigDecimal.valueOf(10.0)).build()).build())).build();
+        String productId = "productId";
+        Product product = Product.builder()
+                .id(productId)
+                .name("product name")
+                .description("product description")
+                .price(BigDecimal.valueOf(10.0))
+                .build();
+        Wishlist wishlist = Wishlist.builder()
+                .id("wishlistId")
+                .userId("userId")
+                .createdAt(Instant.now())
+                .updatedAt(null)
+                .wishListItems(Collections.singletonList(WishListItem.builder()
+                        .id("wishListItemId")
+                        .createdAt(Instant.now())
+                        .product(product)
+                        .build()))
+                .build();
+        when(productService.findById(productId)).thenReturn(product);
+        assertEquals(wishlist.getWishListItems().get(0).getProduct().getId(), productId);
+        assertThrows(RegisteredProductException.class, () ->
+                wishlistService.updateWishList(wishlist, productId));
+    }
 
-        ProductDTO productDTO = ProductDTO.builder()
+    @Test
+    @DisplayName("Should throw registered product exception when insert product that does not exist")
+    void updateWishlist_product_not_found() {
+        String productId = "productId2";
+        Product product = Product.builder()
                 .id("productId")
                 .name("product name")
                 .description("product description")
                 .price(BigDecimal.valueOf(10.0))
                 .build();
-        assertEquals(wishlist.getWishListItems().get(0).getProduct().getId(), productDTO.getId());
-        assertThrows(RegisteredProductException.class, () ->
-                wishlistService.updateWishList(wishlist, productDTO));
+        Wishlist wishlist = Wishlist.builder()
+                .id("wishlistId")
+                .userId("userId")
+                .createdAt(Instant.now())
+                .updatedAt(null)
+                .wishListItems(Collections.singletonList(WishListItem.builder()
+                        .id("wishListItemId")
+                        .createdAt(Instant.now())
+                        .product(product)
+                        .build()))
+                .build();
+        when(productService.findById(productId)).thenThrow(ResourceNotFoundException.class);
+        assertNotEquals(product.getId(), productId);
+        assertThrows(ResourceNotFoundException.class, () ->
+                wishlistService.updateWishList(wishlist, productId));
     }
 
     @Test
     @DisplayName("Should throw wishlist size exception when insert more products than wishlist max size")
     void updateWishList_maxWishlistSize() {
+        String productId = "productId";
         List<WishListItem> items = new ArrayList<>();
         for (int i = 0; i < WishlistService.WISHLIST_MAX_SIZE; i++) {
             items.add(WishListItem.builder().
@@ -175,15 +217,15 @@ class WishlistServiceTest {
                 .wishListItems(items)
                 .build();
 
-        ProductDTO productDTO = ProductDTO.builder()
-                .id("newProductId")
-                .name("new product name")
-                .description("new product description")
-                .price(BigDecimal.valueOf(20.0))
-                .build();
+        when(productService.findById(productId)).thenReturn(Product.builder()
+                .id(productId)
+                .name("product name")
+                .description("product description")
+                .price(BigDecimal.valueOf(10.0))
+                .build());
         assertEquals(WishlistService.WISHLIST_MAX_SIZE, wishlist.getWishListItems().size());
         assertThrows(WishlistMaxSizeException.class, () ->
-                wishlistService.updateWishList(wishlist, productDTO));
+                wishlistService.updateWishList(wishlist, productId));
     }
 
     @Test

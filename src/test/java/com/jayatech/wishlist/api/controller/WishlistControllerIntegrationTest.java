@@ -1,4 +1,4 @@
-package com.jayatech.wishlist.controller;
+package com.jayatech.wishlist.api.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -11,12 +11,10 @@ import com.jayatech.wishlist.domain.model.Product;
 import com.jayatech.wishlist.domain.model.WishListItem;
 import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.model.dto.ProductCheckResponse;
-import com.jayatech.wishlist.domain.model.dto.ProductDTO;
 import com.jayatech.wishlist.domain.model.dto.UserDTO;
 import com.jayatech.wishlist.domain.service.WishlistService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -65,20 +63,21 @@ class WishlistControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    void postWishlistException_userIdNull() throws Exception {
-        UserDTO request = UserDTO.builder().id(null).build();
+    void postWishlistException_userIdNull()  {
+        UserDTO request = new UserDTO();
         mvc.perform(post(URL_WISHLIST).contentType(MediaType.APPLICATION_JSON).content
-                (asJsonString(request.getId()))).andExpect(status().isBadRequest());
+                (asJsonString(request.getUserId()))).andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
-    void postWishlistException_internalError() throws Exception {
+    void postWishlistException_internalError(){
         doThrow(new InternalErrorException(InternalErrorException.EXCEPTION_MESSAGE))
                 .when(wishlistService).saveWishList("userIdtest");
-        UserDTO request = UserDTO.builder().id("userIdtest").build();
+        UserDTO request = new UserDTO();
+        request.setUserId("userIdtest");
         mvc.perform(post(URL_WISHLIST).contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(request.getId()))).andExpect(jsonPath(
+                .content(asJsonString(request.getUserId()))).andExpect(jsonPath(
                         "$.error", is(InternalErrorException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isInternalServerError());
     }
@@ -184,10 +183,15 @@ class WishlistControllerIntegrationTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.product", equalTo(null)));
     }
 
+    /*
+        This test is temporarily disabled so as not
+        to create a new wishlist using the test environment.
+    */
     @Test
     @Disabled
     void incrementWishlist() throws Exception {
         String wishlistId = "wishlistId";
+        String productId = "productId";
         Wishlist wishlist = Wishlist.builder()
                 .id(wishlistId)
                 .userId("userId")
@@ -195,12 +199,6 @@ class WishlistControllerIntegrationTest {
                 .updatedAt(instant)
                 .wishListItems(Collections.emptyList())
                 .build();
-
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId("productId");
-        productDTO.setName("product test");
-        productDTO.setPrice(BigDecimal.valueOf(11.5));
-        productDTO.setDescription("product test description");
 
         Wishlist updatedWishlist = Wishlist.builder()
                 .id(wishlistId)
@@ -218,10 +216,10 @@ class WishlistControllerIntegrationTest {
                 .build();
 
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
-        doReturn(updatedWishlist).when(wishlistService).updateWishList(wishlist, productDTO);
-        mvc.perform(post(URL_WISHLIST + "/wishlistId/items")
+        doReturn(updatedWishlist).when(wishlistService).updateWishList(wishlist, productId);
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items/productId")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(productDTO)))
+                .content(asJsonString(productId)))
                 .andExpect(status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("$.[*]", hasSize(5)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", equalTo(wishlistId)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.userId", equalTo("userId")))
@@ -237,14 +235,9 @@ class WishlistControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    void incrementWishlist_registered_Product() throws Exception {
+    void incrementWishlist_registered_Product()  {
         String wishlistId = "wishlistId";
-
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId("productId");
-        productDTO.setName("product test");
-        productDTO.setPrice(BigDecimal.valueOf(11.5));
-        productDTO.setDescription("product test description");
+        String productId = "productId";
 
         Wishlist wishlist = Wishlist.builder()
                 .id(wishlistId)
@@ -265,23 +258,50 @@ class WishlistControllerIntegrationTest {
 
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
         doThrow(new RegisteredProductException(RegisteredProductException.EXCEPTION_MESSAGE))
-                .when(wishlistService).updateWishList(wishlist, productDTO);
-        mvc.perform(post(URL_WISHLIST + "/wishlistId/items")
-                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(productDTO)))
+                .when(wishlistService).updateWishList(wishlist, productId);
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items/productId")
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(productId)))
                 .andExpect(jsonPath("$.error", is(RegisteredProductException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
-    void incrementWishlist_max_size() throws Exception {
+    void incrementWishlist_product_not_found()  {
         String wishlistId = "wishlistId";
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setId("productId");
-        productDTO.setName("product test");
-        productDTO.setPrice(BigDecimal.valueOf(11.5));
-        productDTO.setDescription("product test description");
+        String productId = "productIdTest";
 
+        Wishlist wishlist = Wishlist.builder()
+                .id(wishlistId)
+                .userId("userId")
+                .createdAt(instant)
+                .updatedAt(instant)
+                .wishListItems(Collections.singletonList(WishListItem.builder()
+                        .id("wishlistItemId")
+                        .createdAt(instant)
+                        .product(Product.builder()
+                                .id("productId")
+                                .name("product test")
+                                .price(BigDecimal.valueOf(11.5))
+                                .description("product test description")
+                                .build())
+                        .build()))
+                .build();
+
+        doReturn(wishlist).when(wishlistService).findById(wishlistId);
+        doThrow(new ResourceNotFoundException(ResourceNotFoundException.EXCEPTION_MESSAGE))
+                .when(wishlistService).updateWishList(wishlist, productId);
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items/productIdTest")
+                        .contentType(MediaType.APPLICATION_JSON).content(asJsonString(productId)))
+                .andExpect(jsonPath("$.error", is(ResourceNotFoundException.EXCEPTION_MESSAGE)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @SneakyThrows
+    void incrementWishlist_max_size() {
+        String wishlistId = "wishlistId";
+        String productId = "productId";
         List<WishListItem> items = new ArrayList<>();
         for (int i = 0; i < WishlistService.WISHLIST_MAX_SIZE; i++) {
             items.add(WishListItem.builder()
@@ -306,9 +326,9 @@ class WishlistControllerIntegrationTest {
 
         doReturn(wishlist).when(wishlistService).findById(wishlistId);
         doThrow(new WishlistMaxSizeException(WishlistMaxSizeException.EXCEPTION_MESSAGE)).
-                when(wishlistService).updateWishList(wishlist, productDTO);
-        mvc.perform(post(URL_WISHLIST + "/wishlistId/items").
-                contentType(MediaType.APPLICATION_JSON).content(asJsonString(productDTO)))
+                when(wishlistService).updateWishList(wishlist, productId);
+        mvc.perform(post(URL_WISHLIST + "/wishlistId/items/productId").
+                contentType(MediaType.APPLICATION_JSON).content(asJsonString(productId)))
                 .andExpect(jsonPath("$.error", is(WishlistMaxSizeException.EXCEPTION_MESSAGE)))
                 .andExpect(status().isBadRequest());
     }
@@ -343,7 +363,7 @@ class WishlistControllerIntegrationTest {
 
     @Test
     @SneakyThrows
-    void deleteProduct_not_found() throws Exception {
+    void deleteProduct_not_found() {
         String wishlistId = "wishlistId";
         String userId = "userid1";
         String itemId = "itemId";

@@ -1,6 +1,5 @@
-package com.jayatech.wishlist.controller;
+package com.jayatech.wishlist.api.controller;
 
-import com.jayatech.wishlist.api.controller.WishlistController;
 import com.jayatech.wishlist.domain.exception.RegisteredProductException;
 import com.jayatech.wishlist.domain.exception.ResourceNotFoundException;
 import com.jayatech.wishlist.domain.exception.WishlistMaxSizeException;
@@ -8,7 +7,6 @@ import com.jayatech.wishlist.domain.model.Product;
 import com.jayatech.wishlist.domain.model.WishListItem;
 import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.model.dto.ProductCheckResponse;
-import com.jayatech.wishlist.domain.model.dto.ProductDTO;
 import com.jayatech.wishlist.domain.model.dto.UserDTO;
 import com.jayatech.wishlist.domain.service.WishlistService;
 import org.junit.jupiter.api.DisplayName;
@@ -37,11 +35,11 @@ class WishlistControllerTest {
     private WishlistService wishlistService;
 
     @Test
-    @DisplayName("Should create a wishlist")
+    @DisplayName("Should create a wishlist wish status 201")
     void create_wishlist() {
         String id = "wishlistID";
         String userId = "userid1";
-        UserDTO userDTO = UserDTO.builder().id(userId).build();
+        UserDTO userDTO = UserDTO.builder().userId(userId).build();
         Wishlist wishlist = Wishlist.builder()
                 .id(id)
                 .userId("userId1")
@@ -57,7 +55,7 @@ class WishlistControllerTest {
 
 
     @Test
-    @DisplayName("Should get product by Id")
+    @DisplayName("Should get product by Id wish status 200")
     void getProductId() {
         String wishlisId = "wishlistId";
         Wishlist wishlist = Wishlist.builder()
@@ -74,7 +72,7 @@ class WishlistControllerTest {
     }
 
     @Test
-    @DisplayName("Should get product by Id")
+    @DisplayName("Should get product by Id with status 200")
     void getProductId_with_item() {
         String wishlisId = "wishlistId";
         Wishlist wishlist = Wishlist.builder()
@@ -101,7 +99,7 @@ class WishlistControllerTest {
     }
 
     @Test
-    @DisplayName("Should throw a not found exception")
+    @DisplayName("Should throw a not found exception wish status 404")
     void getProductId_ProductNotFound() {
         String id = "wishlistId";
         when(wishlistService.findById(id)).thenThrow(ResourceNotFoundException.class);
@@ -110,7 +108,8 @@ class WishlistControllerTest {
     }
 
     @Test
-    void testCheckWishList_ResponseEqualsService() {
+    @DisplayName("Should check wishlist and throw a not found exception wish status 404")
+    void checkWishList_ResponseEqualsService() {
         String wishlistId = "wishlistId";
         String productId = "productId";
         Product product = Product.builder()
@@ -140,7 +139,8 @@ class WishlistControllerTest {
     }
 
     @Test
-    void testCheckWishList() {
+    @DisplayName("Should check if there is a product in a wishlist with status 200")
+    void checkWishList() {
         String wishlistId = "wishlistId";
         String productId = "productId";
         Wishlist wishlist = Wishlist.builder()
@@ -160,17 +160,12 @@ class WishlistControllerTest {
     }
 
     @Test
+    @DisplayName("Should include wishlist item  with status 200")
     void incrementWishList() {
         String wishlistId = "wishlistId";
         String productId = "productId";
 
         Product product = Product.builder()
-                .id(productId)
-                .name("product name test")
-                .price(BigDecimal.valueOf(11.5))
-                .description("product test description")
-                .build();
-        ProductDTO productDTO = ProductDTO.builder()
                 .id(productId)
                 .name("product name test")
                 .price(BigDecimal.valueOf(11.5))
@@ -198,15 +193,15 @@ class WishlistControllerTest {
                 .build();
 
         when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
-        when(wishlistService.updateWishList(wishlist, productDTO)).thenReturn(wishlistUpdated);
-        ResponseEntity<Wishlist> responseEntity = wishListController.incrementWishlist(wishlistId, productDTO);
-        verify(wishlistService).updateWishList(wishlist, productDTO);
+        when(wishlistService.updateWishList(wishlist, productId)).thenReturn(wishlistUpdated);
+        ResponseEntity<Wishlist> responseEntity = wishListController.incrementWishlist(wishlistId, productId);
+        verify(wishlistService).updateWishList(wishlist, productId);
         assertEquals(wishlistUpdated, responseEntity.getBody());
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
 
     @Test
-    @DisplayName("Should throw a not found exception")
+    @DisplayName("Should throw a found exception product not found status 404")
     void incrementWishList_product_found() {
         String wishlistId = "wishlistId";
         String productId = "productId";
@@ -226,21 +221,47 @@ class WishlistControllerTest {
                                 .build())
                         .build()))
                 .build();
-        ProductDTO productDTO = ProductDTO.builder()
-                .id(productId).name("product name test")
-                .price(BigDecimal.valueOf(11.5))
-                .description("product test description")
-                .build();
-        when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
-        when(wishlistService.updateWishList(wishlist, productDTO)).thenThrow(RegisteredProductException.class);
 
-        assertThrows(RegisteredProductException.class, () -> wishListController.incrementWishlist(wishlistId, productDTO));
+        when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
+        when(wishlistService.updateWishList(wishlist, productId)).thenThrow(RegisteredProductException.class);
+
+        assertThrows(RegisteredProductException.class, () -> wishListController.incrementWishlist(wishlistId, productId));
         verify(wishlistService).findById(wishlistId);
-        verify(wishlistService).updateWishList(wishlist, productDTO);
+        verify(wishlistService).updateWishList(wishlist, productId);
     }
 
     @Test
-    @DisplayName("Should throw a not found exception")
+    @DisplayName("Should throw a resource product not found exception status 404")
+    void incrementWishList_product_not_found() {
+        String wishlistId = "wishlistId";
+        String productId = "productIdtest";
+        Wishlist wishlist = Wishlist.builder()
+                .id(wishlistId)
+                .userId("userId1")
+                .createdAt(Instant.now())
+                .updatedAt(null)
+                .wishListItems(Collections.singletonList(WishListItem.builder()
+                        .id("wishListItemId")
+                        .createdAt(Instant.now())
+                        .product(Product.builder()
+                                .id("productId")
+                                .name("product name test")
+                                .price(BigDecimal.valueOf(11.5))
+                                .description("product test description")
+                                .build())
+                        .build()))
+                .build();
+
+        when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
+        when(wishlistService.updateWishList(wishlist, productId)).thenThrow(ResourceNotFoundException.class);
+
+        assertThrows(ResourceNotFoundException.class, () -> wishListController.incrementWishlist(wishlistId, productId));
+        verify(wishlistService).findById(wishlistId);
+        verify(wishlistService).updateWishList(wishlist, productId);
+    }
+
+    @Test
+    @DisplayName("Should throw wishlist size exception with status 400")
     void incrementWishList_max_size() {
         String wishlistId = "wishlistId";
         String productId = "productId";
@@ -265,22 +286,19 @@ class WishlistControllerTest {
                 .updatedAt(null)
                 .wishListItems(items)
                 .build();
-        ProductDTO productDTO = ProductDTO.builder()
-                .id(productId)
-                .name("product name test 21")
-                .price(BigDecimal.valueOf(11.5))
-                .description("product test description 2")
-                .build();
-        when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
-        when(wishlistService.updateWishList(wishlist, productDTO)).thenThrow(WishlistMaxSizeException.class);
 
-        assertThrows(WishlistMaxSizeException.class, () -> wishListController.incrementWishlist(wishlistId, productDTO));
+        when(wishlistService.findById(wishlistId)).thenReturn(wishlist);
+        when(wishlistService.updateWishList(wishlist, productId))
+                .thenThrow(WishlistMaxSizeException.class);
+
+        assertThrows(WishlistMaxSizeException.class, () ->
+                wishListController.incrementWishlist(wishlistId, productId));
         verify(wishlistService).findById(wishlistId);
-        verify(wishlistService).updateWishList(wishlist, productDTO);
+        verify(wishlistService).updateWishList(wishlist, productId);
     }
 
     @Test
-    @DisplayName("Should create a wishlist")
+    @DisplayName("Should delete a wishlist item with status 204")
     void deleteProduct() {
         String wishlistId = "wishlistID";
         String userId = "userid1";
@@ -310,7 +328,7 @@ class WishlistControllerTest {
     }
 
     @Test
-    @DisplayName("Should create a wishlist")
+    @DisplayName("Should throw wishlist item not found exception wish status 404")
     void deleteProduct_not_found() {
         String wishlistId = "wishlistID";
         String userId = "userid1";

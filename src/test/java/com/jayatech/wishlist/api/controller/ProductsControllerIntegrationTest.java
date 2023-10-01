@@ -1,4 +1,4 @@
-package com.jayatech.wishlist.controller;
+package com.jayatech.wishlist.api.controller;
 
 import com.jayatech.wishlist.domain.exception.ResourceNotFoundException;
 import com.jayatech.wishlist.domain.model.Product;
