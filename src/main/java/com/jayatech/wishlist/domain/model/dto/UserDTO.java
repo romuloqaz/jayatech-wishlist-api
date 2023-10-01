@@ -1,16 +1,13 @@
 package com.jayatech.wishlist.domain.model.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
-import java.io.Serializable;
-
+@Data
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class UserDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private String id;
-
+public class UserDTO {
+    private String userId;
 }

@@ -5,7 +5,6 @@ import com.jayatech.wishlist.domain.model.Product;
 import com.jayatech.wishlist.domain.model.WishListItem;
 import com.jayatech.wishlist.domain.model.Wishlist;
 import com.jayatech.wishlist.domain.model.dto.ProductCheckResponse;
-import com.jayatech.wishlist.domain.model.dto.ProductDTO;
 import com.jayatech.wishlist.domain.repository.WishlistRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +26,22 @@ public class WishlistService {
 
     private final WishlistRepository wishlistRepository;
 
+    private final ProductService productService;
+
     @Autowired
-    public WishlistService(WishlistRepository wishListRepository) {
+    public WishlistService(WishlistRepository wishListRepository, ProductService productService) {
         this.wishlistRepository = wishListRepository;
+        this.productService = productService;
     }
 
+    /**
+     * Saves a new Wishlist based on the userId
+     *
+     * @param userId is the identifier of the user the wishlist belongs to
+     * @return a created Wishlist
+     * @throws WishlistFoundException when there is a Wishlist saved with the same userId
+     * @throws InternalErrorException when an internal error occurs
+     */
     public Wishlist saveWishList(String userId) {
         if (wishlistRepository.findByUserId(userId).isPresent()) {
             throw new WishlistFoundException(WISHLIST_FOUND_EXCEPTION_MESSAGE);
@@ -48,18 +58,33 @@ public class WishlistService {
         }
     }
 
+    /**
+     * Retrieves a Wishlist by the wishlistId
+     *
+     * @param wishlistId is the wishlist identifier
+     * @return a Wishlist related to the id
+     * @throws ResourceNotFoundException when the Wishlist is not found.
+     */
     public Wishlist findById(String wishlistId) {
-        return wishlistRepository.findById(wishlistId).orElseThrow(() ->
+        Wishlist wishlist = wishlistRepository.findById(wishlistId).orElseThrow(() ->
                 new ResourceNotFoundException(WISHLIST_NOT_FOUND_EXCEPTION_MESSAGE));
+
+        //The next line sorts each item on the wishlist item based on the createdAt attribute.
+        wishlist.getWishListItems().sort(Comparator.comparing(WishListItem::getCreatedAt));
+        return wishlist;
     }
 
-    public Wishlist updateWishList(Wishlist wishlist, ProductDTO productDTO) {
-        Product product = Product.builder()
-                .id(productDTO.getId())
-                .name(productDTO.getName())
-                .description(productDTO.getDescription())
-                .price(productDTO.getPrice())
-                .build();
+    /**
+     * Includes a new WishlistItem on a Wishlist
+     *
+     * @param wishlist is the user's wishlist
+     * @param productId is the product identifier that will be included from the wishlist
+     * @return a Wishlist related to the id
+     * @throws InternalErrorException when an internal error occurs
+     */
+    public Wishlist updateWishList(Wishlist wishlist, String productId) {
+        Product product = productService.findById(productId);
+
         this.validateProduct(wishlist, product.getId());
         wishlist.getWishListItems().add(WishListItem.builder()
                 .id(UUID.randomUUID().toString())
@@ -75,6 +100,14 @@ public class WishlistService {
         }
     }
 
+    /**
+     * Removes the product from a wishlist
+     *
+     * @param wishlist is the user's wishlist
+     * @param wishListItemId is the wishlist item identifier that will be removed from the wishlist
+     * @throws ResourceNotFoundException when a wishlist item is not found
+     * @throws InternalErrorException when an internal error occurs
+     */
     public void removeWishListProduct(Wishlist wishlist, String wishListItemId) {
         if (Objects.nonNull(wishlist.getWishListItems())) {
             List<WishListItem> updatedItems = new ArrayList<>(wishlist.getWishListItems());
@@ -94,6 +127,13 @@ public class WishlistService {
         }
     }
 
+    /**
+     * Checks if the product is on the Wishlist
+     *
+     * @param wishlist is the user's wishlist
+     * @param productId is the product item identifier that will be verified
+     * @return a ProductCheck response with the product if the product is on the Wishlist
+     */
     public ProductCheckResponse checkProduct(Wishlist wishlist, String productId) {
         Product product = this.hasProductInWishlist(wishlist, productId);
         if (Objects.nonNull(product.getId())) {
@@ -102,6 +142,13 @@ public class WishlistService {
         return new ProductCheckResponse();
     }
 
+    /**
+     * Verifies if the product is on the Wishlist
+     *
+     * @param wishlist is the user's wishlist
+     * @param productId is the product item identifier that will be verified
+     * @return a product with its values if there is a product in a wishlist as the productId
+     */
     public Product hasProductInWishlist(Wishlist wishlist, String productId) {
         Product product = new Product();
         if (Objects.nonNull(wishlist) && Objects.nonNull(wishlist.getWishListItems())) {
@@ -114,6 +161,15 @@ public class WishlistService {
         return product;
     }
 
+    /**
+     * Validates whether the product is on the wish list
+     * Validates the maximum size of the wish list
+     *
+     * @param wishlist is the user's wishlist
+     * @param productId is the product that will be validated
+     * @throws RegisteredProductException when the product is on the wishlist
+     * @throws WishlistMaxSizeException when insert more products than the wishlist size
+     */
     public void validateProduct(Wishlist wishlist, String productId) {
         Product hasProduct = this.hasProductInWishlist(wishlist, productId);
         if (hasProduct.getId() != null) {

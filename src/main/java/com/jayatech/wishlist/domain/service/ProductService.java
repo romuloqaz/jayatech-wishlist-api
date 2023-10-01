@@ -22,10 +22,24 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+
+    /**
+     * Retrieves a list of products
+     *
+     * @return a list of all products.
+     */
     public List<Product> findAll() {
         return productRepository.findAll();
     }
 
+
+    /**
+     * Retrieves a Product by the ProductId
+     *
+     * @param id is the product identifier
+     * @return a Product related to the id
+     * @throws ResourceNotFoundException when the Product is not found.
+     */
     public Product findById(String id) {
         return productRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException(PRODUCT_NOT_FOUND_EXCEPTION_MESSAGE));
