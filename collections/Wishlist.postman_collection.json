@@ -1,0 +1,1046 @@
+{
+	"info": {
+		"_postman_id": "93a178ac-bebd-4365-9a72-6489af96f12c",
+		"name": "Wishlist",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22793497"
+	},
+	"item": [
+		{
+			"name": "Create Wishlist",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"userId\": \"b4149e77c36c440aa4f18c43381a46aa\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/wishlist",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"wishlist"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Create Wishlist",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"6518691eb39160509735ec5a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 12:50:09 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"6518198105a7884e725f334f\",\n    \"userId\": \"b4149e77c36c440aa4f18c43381a46a\",\n    \"createdAt\": \"2023-09-30T12:50:09.766346700Z\",\n    \"updatedAt\": null,\n    \"wishListItems\": []\n}"
+				},
+				{
+					"name": "Create Wishlist found exception",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"6518691eb39160509735ec5a\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:54:05 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696096445686,\n    \"status\": 400,\n    \"error\": \"wishlist.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Wishlist.found\",\n    \"path\": \"/wishlist\"\n}"
+				},
+				{
+					"name": "Create Wishlist internal error exception",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"b4149e77-c36c-440a-a4f1-8c43381a46aa\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:54:05 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696096445686,\n    \"status\": 400,\n    \"error\": \"internal.error.exception\",\n    \"message\": \"exeption.message\",\n    \"path\": \"/wishlist\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Get Wishlist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/wishlist/65186d5c8047d518baa43a33",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"wishlist",
+						"65186d5c8047d518baa43a33"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Get Wishlist",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/wishlist/65186d5c8047d518baa43a33",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"65186d5c8047d518baa43a33"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:54:49 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"65186d5c8047d518baa43a33\",\n    \"userId\": \"b4149e77c36c440aa4f18c43381a46aa\",\n    \"createdAt\": \"2023-09-30T18:47:56.544Z\",\n    \"updatedAt\": null,\n    \"wishListItems\": []\n}"
+				},
+				{
+					"name": "Get Wishlist not found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1k",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1k"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:55:00 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696096500200,\n    \"status\": 404,\n    \"error\": \"resource.not.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Wishlist.not.found\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbae1k\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Check Product Wishlist",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/wishlist/65186d5c8047d518baa43a33/check/2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"wishlist",
+						"65186d5c8047d518baa43a33",
+						"check",
+						"2"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Check Product Wishlist",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/wishlist/65186d5c8047d518baa43a33/check/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"65186d5c8047d518baa43a33",
+								"check",
+								"2"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:05:20 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"product\": {\n        \"id\": \"2\",\n        \"name\": \"productTest2\",\n        \"price\": 5,\n        \"description\": \"test product2\"\n    },\n    \"hasProductInWishlist\": true,\n    \"message\": \"product.found\"\n}"
+				},
+				{
+					"name": "Check Product Wishlist product not found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/wishlist/65186d5c8047d518baa43a33/check/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"65186d5c8047d518baa43a33",
+								"check",
+								"2"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:05:03 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"product\": null,\n    \"hasProductInWishlist\": false,\n    \"message\": \"product.not.found\"\n}"
+				},
+				{
+					"name": "Check Product Wishlist not found",
+					"originalRequest": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbswsae1/check/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbswsae1",
+								"check",
+								"2"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:05:37 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696097137083,\n    \"status\": 404,\n    \"error\": \"resource.not.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Wishlist.not.found\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbsae1/check/1\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Increment Wishlist",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"id\": \"3\",\n        \"name\": \"productTest3\",\n        \"price\": 5,\n        \"description\": \"test product3\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/wishlist/1/items",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"wishlist",
+						"1",
+						"items"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Increment Wishlist",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": \"2\",\n        \"name\": \"productTest2\",\n        \"price\": 5,\n        \"description\": \"test product2\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1",
+								"items"
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:08:13 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"id\": \"651744e34b8dc569da6fbae1\",\n    \"userId\": \"userIdtest\",\n    \"createdAt\": \"2023-09-29T21:42:59.349Z\",\n    \"updatedAt\": \"2023-09-30T18:08:13.910588594Z\",\n    \"wishListItems\": [\n        {\n            \"id\": \"94d8240b-5a4d-4b74-a91c-ac993d48a7a8\",\n            \"createdAt\": \"2023-09-30T17:59:21.945Z\",\n            \"product\": {\n                \"id\": \"1\",\n                \"name\": \"productTest5\",\n                \"price\": 5,\n                \"description\": \"test product4\"\n            }\n        },\n        {\n            \"id\": \"64424207-4754-47df-95bb-6d02541200e5\",\n            \"createdAt\": \"2023-09-30T18:08:13.910582505Z\",\n            \"product\": {\n                \"id\": \"2\",\n                \"name\": \"productTest2\",\n                \"price\": 5,\n                \"description\": \"test product2\"\n            }\n        }\n    ]\n}"
+				},
+				{
+					"name": "Increment Wishlist not found",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": \"2\",\n        \"name\": \"productTest2\",\n        \"price\": 5,\n        \"description\": \"test product2\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1s/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1s",
+								"items"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:09:54 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696097394755,\n    \"status\": 404,\n    \"error\": \"resource.not.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Wishlist.not.found\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbae1s/items\"\n}"
+				},
+				{
+					"name": "Increment Wishlist Product not found",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": \"ERARARAERAE2\",\n        \"name\": \"productRARAERTest2\",\n        \"price\": 5333333,\n        \"description\": \"test produASDASDASDASDASDASct2\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/65186d5c8047d518baa43a33/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"65186d5c8047d518baa43a33",
+								"items"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sun, 01 Oct 2023 15:39:14 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696174754854,\n    \"status\": 404,\n    \"error\": \"resource.not.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Product.not.found\",\n    \"path\": \"/wishlist/65186d5c8047d518baa43a33/items\"\n}"
+				},
+				{
+					"name": "Increment Wishlist Product registered",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": \"1\",\n        \"name\": \"productTest5\",\n        \"price\": 5,\n        \"description\": \"test product4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1",
+								"items"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:07:22 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696097242822,\n    \"status\": 400,\n    \"error\": \"wishlist.maximum.size.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Product.registered\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbae1/items\"\n}"
+				},
+				{
+					"name": "Increment Wishlist maximum size exception",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": \"1\",\n        \"name\": \"productTest5\",\n        \"price\": 5,\n        \"description\": \"test product4\"\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1/items",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1",
+								"items"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:59:23 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696096763273,\n    \"status\": 400,\n    \"error\": \"wishlist.maximum.size.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.Product.registered\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbae1/items\"\n}"
+				},
+				{
+					"name": "Increment Wishlist internal error",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"userIdtest1\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:54:05 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696096445686,\n    \"status\": 400,\n    \"error\": \"internal.error.exception\",\n    \"message\": \"exeption.message\",\n    \"path\": \"/wishlist\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Remove a wishlist item",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/wishlist/userid1",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"wishlist",
+						"userid1"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Delete wishList",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"id\": \"b2687fcc-7eee-47ce-a634-b55174e1752b\",\n            \"updatedAt\": \"2023-09-28\",\n            \"product\": {\n                \"id\": \"3\",\n                \"name\": \"productTest3\",\n                \"price\": 5,\n                \"description\": \"test product3\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1/items/94d8240b-5a4d-4b74-a91c-ac993d48a7a8",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1",
+								"items",
+								"94d8240b-5a4d-4b74-a91c-ac993d48a7a8"
+							]
+						}
+					},
+					"status": "No Content",
+					"code": 204,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:11:13 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": null
+				},
+				{
+					"name": "Delete wishList not found",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"id\": \"b2687fcc-7eee-47ce-a634-b55174e1752b\",\n            \"updatedAt\": \"2023-09-28\",\n            \"product\": {\n                \"id\": \"3\",\n                \"name\": \"productTest3\",\n                \"price\": 5,\n                \"description\": \"test product3\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1/items/77119805-5da4-4703-88b5-77d6ab253e13",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1",
+								"items",
+								"77119805-5da4-4703-88b5-77d6ab253e13"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 14:59:44 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696085984537,\n    \"status\": 404,\n    \"error\": \"resource.not.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.WishListItem.not.found\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbae1/items/77119805-5da4-4703-88b5-77d6ab253e13\"\n}"
+				},
+				{
+					"name": "Delete wishList item not found",
+					"originalRequest": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"id\": \"b2687fcc-7eee-47ce-a634-b55174e1752b\",\n            \"updatedAt\": \"2023-09-28\",\n            \"product\": {\n                \"id\": \"3\",\n                \"name\": \"productTest3\",\n                \"price\": 5,\n                \"description\": \"test product3\"\n            }\n        }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist/651744e34b8dc569da6fbae1/items/77119805-5da4-4703-88b5-77d6ab253e13",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist",
+								"651744e34b8dc569da6fbae1",
+								"items",
+								"77119805-5da4-4703-88b5-77d6ab253e13"
+							]
+						}
+					},
+					"status": "Not Found",
+					"code": 404,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 18:10:55 GMT"
+						},
+						{
+							"key": "Keep-Alive",
+							"value": "timeout=60"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696097455947,\n    \"status\": 404,\n    \"error\": \"resource.not.found.exception\",\n    \"message\": \"com.jayatech.wishlist.domain.model.WishListItem.not.found\",\n    \"path\": \"/wishlist/651744e34b8dc569da6fbae1/items/77119805-5da4-4703-88b5-77d6ab253e13\"\n}"
+				},
+				{
+					"name": "Delete WIshlist item internal error",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"userIdtest1\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/wishlist",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"wishlist"
+							]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Sat, 30 Sep 2023 17:54:05 GMT"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"timestamp\": 1696096445686,\n    \"status\": 400,\n    \"error\": \"internal.error.exception\",\n    \"message\": \"exeption.message\",\n    \"path\": \"/wishlist\"\n}"
+				}
+			]
+		}
+	]
+}
