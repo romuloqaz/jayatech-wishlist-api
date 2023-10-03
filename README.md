@@ -3,7 +3,7 @@ A avaliação consiste na criação de uma API para o gerenciamento de uma lista
 
 ## Comentários
 A API foi criada utilizando Spring boot 3 e como banco de dados, foi utilizado o MongoDB, que é um banco NoSQL. Foram feitas validações personalizadas de exceções, de acordo com todas as regras de negocio dos requisitos. Coleções do postman também foram inseridas e podem ser acessadas na pasta collections, onde foi inseridos as possíveis respostas para cada requisição que é disponível na aplicação.
-A API foi documentada utilizando a especificação OpenAPI e documentação da aplicação pode ser acessada pelos seguintes endereços após executar a aplicação:
+A API foi documentada utilizando a especificação OpenAPI e documentação da aplicação pode ser acessada pelos seguintes endereços após a execução da aplicação:
 
 Visualização por interface
 * http://localhost:8080/swagger-ui/index.html#/
@@ -34,10 +34,11 @@ Caso seja necessário, o usuário deve inserir a senha de administrador da máqu
 Em seguida o usuário deve aguardar a criação das imagens necessárias para a execução da aplicação. Quando for finalizada, poderá acessar os endpoints da API pelo endereço http://localhost:8080/ .
 
 ## Considerações
-* O aplicativo backend foi dockerizado e pode ser executado usando docker compose.
+* O aplicativo backend foi encapsulado e pode ser executado usando docker compose.
 * Existem validações e respostas personalizadas para cada exceção gerada, como também logs gerados.
-* Existem alguns produtos e uma lista de desejos adicionadas no banco de dados que podem servir como testes. O ID da lista de desejos é wishlistId1.
-* Foi adicionado grande cobertura de testes durante o desenvolvimento, como também testes automatizados para avaliar comportamento da aplicação utilizando Cucumber.
+* Foram semeados alguns produtos e uma lista de desejos adicionadas no banco de dados que podem servir como testes. O ID da lista de desejos é ``wishlistId1``.
+* Foi utilizado a ferramenta de migração <b>Mongock</b> do banco de dados <b>MongoDB </b>para gerenciar as migrações e primeiras inserções.
+* Foi adicionado grande cobertura de testes durante o desenvolvimento, utilizando praticas de testes unitários e de integração, como também testes automatizados para avaliar comportamento da aplicação utilizando Cucumber.
 * Documentação do codigo da classe de serviços para mais clareza da lógica e tratamento de cada comportamento.
 * Durante todo o desenvolvimento, sempre foram empregados boas práticas de engenharia de software e arquitetura da aplicação.
 
