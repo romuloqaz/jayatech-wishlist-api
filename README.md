@@ -38,7 +38,7 @@ Em seguida o usuário deve aguardar a criação das imagens necessárias para a 
 * Existem validações e respostas personalizadas para cada exceção gerada, como também logs gerados.
 * Foram semeados alguns produtos e uma lista de desejos adicionadas no banco de dados que podem servir como testes. O ID da lista de desejos é ``wishlistId1``.
 * Foi utilizado a ferramenta de migração <b>Mongock</b> do banco de dados <b>MongoDB </b>para gerenciar as migrações e primeiras inserções.
-* Foi adicionado grande cobertura de testes durante o desenvolvimento, utilizando praticas de testes unitários e de integração, como também testes automatizados para avaliar comportamento da aplicação utilizando Cucumber.
+* Foi adicionado grande cobertura de testes durante o desenvolvimento, utilizando praticas de testes unitários utilizando <b>Mockito</b>, de integração utilizando <b>test containers</b>, como também testes automatizados para avaliar comportamento da aplicação utilizando Cucumber.
 * Documentação do codigo da classe de serviços para mais clareza da lógica e tratamento de cada comportamento.
 * Durante todo o desenvolvimento, sempre foram empregados boas práticas de engenharia de software e arquitetura da aplicação.
 
