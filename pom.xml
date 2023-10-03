@@ -22,6 +22,7 @@
 		<mockito.version>5.2.0</mockito.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<cucumber.version>6.8.0</cucumber.version>
+		<mongock.version>5.3.4</mongock.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -65,6 +66,16 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>io.mongock</groupId>
+			<artifactId>mongock-springboot-v3</artifactId>
+			<version>${mongock.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.mongock</groupId>
+			<artifactId>mongodb-springdata-v4-driver</artifactId>
+			<version>${mongock.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
@@ -124,5 +135,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>wishlist-api</finalName>
 	</build>
 </project>
