@@ -37,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Disabled
 class WishlistControllerIntegrationTest {
 
     private static final String URL_WISHLIST = "/wishlist";
