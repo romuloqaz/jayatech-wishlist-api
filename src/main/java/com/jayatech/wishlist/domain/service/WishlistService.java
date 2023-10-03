@@ -117,8 +117,8 @@ public class WishlistService {
                 throw new ResourceNotFoundException(WISHLIST_ITEM_NOT_FOUND_EXCEPTION_MESSAGE);
             }
             wishlist.setWishListItems(updatedItems);
+            wishlist.setUpdatedAt(Instant.now());
         }
-        wishlist.setUpdatedAt(Instant.now());
         try {
             wishlistRepository.save(wishlist);
         } catch (Exception e) {
