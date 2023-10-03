@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "product")
+@Document(collection = "products")
 public class Product {
 
     @Id
