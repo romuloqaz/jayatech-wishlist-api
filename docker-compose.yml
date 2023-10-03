@@ -1,15 +1,25 @@
-version: '3.8'
+version: "3.8"
 services:
-  mongodb:
-    image: mongo
-    container_name: mongodb
+  wishlist-api:
+    build: .
+    container_name: "wishlist-app"
     ports:
-      - "27017:27017"
+      - "8080:8080"
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    ports:
+      - "27070:27017"
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    ports:
+      - "8081:8081"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: jayatech
-      MONGO_INITDB_ROOT_PASSWORD: jayatech
-    volumes:
-      - mongodb_data:/data/db
-
-volumes:
-  mongodb_data:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    depends_on:
+      - mongodb
