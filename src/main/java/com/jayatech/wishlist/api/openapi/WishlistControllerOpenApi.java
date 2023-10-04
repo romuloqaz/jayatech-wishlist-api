@@ -29,7 +29,7 @@ public interface WishlistControllerOpenApi {
             @ApiResponse(responseCode = "400", description = "Wishlist duplicated",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "400", description = "Internal error",
+            @ApiResponse(responseCode = "500", description = "Internal error",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))})
     })
@@ -57,12 +57,9 @@ public interface WishlistControllerOpenApi {
             @ApiResponse(responseCode = "200", description = "Product found on a wishlist",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ProductCheckResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Product not found on a wishlist",
+            @ApiResponse(responseCode = "404", description = "Product not found on a wishlist or Wishlist not found",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = ProductCheckResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Wishlist not found",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = StandardError.class))})
+                            schema = @Schema(implementation = ProductCheckResponse.class))})
     })
     @GetMapping("/{wishlistId}/check/{productId}")
     ResponseEntity<ProductCheckResponse> checkWishList(
@@ -74,19 +71,13 @@ public interface WishlistControllerOpenApi {
             @ApiResponse(responseCode = "201", description = "Include new Product on a Wishlist",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = Wishlist.class))}),
-            @ApiResponse(responseCode = "400", description = "Wishlist maximum size",
+            @ApiResponse(responseCode = "400", description = "Wishlist maximum size or Product registered on a wishlist",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "400", description = "Product registered on a wishlist",
+            @ApiResponse(responseCode = "404", description = "Wishlist not found or Product not found",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "404", description = "Wishlist not found",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "404", description = "Product not found",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "400", description = "Internal server error",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))})
 
@@ -99,13 +90,10 @@ public interface WishlistControllerOpenApi {
     @Operation(summary = "Remove a Wishlist Item")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Wishlist item deleted"),
-            @ApiResponse(responseCode = "404", description = "Wishlist not found",
+            @ApiResponse(responseCode = "404", description = "Wishlist not found or Wishlist item not found",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "404", description = "Wishlist item not found",
-                    content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = StandardError.class))}),
-            @ApiResponse(responseCode = "400", description = "Internal server error",
+            @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = StandardError.class))})
 
