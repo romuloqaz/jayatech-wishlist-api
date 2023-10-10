@@ -1,14 +1,14 @@
 package com.jayatech.wishlist.domain.model;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.time.Instant;
 
-@Data
 @Builder
+@Getter
 public class WishListItem {
 
     @Id
