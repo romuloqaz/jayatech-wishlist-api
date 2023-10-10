@@ -14,21 +14,33 @@ Visualização da documentação da aplicação em formato Json padronizado pela
 * http://localhost:8080/api-docs
 
 ## Instruções para executar a aplicação
-Para executar a aplicação, o usuário deve ter instalado no computador <b>Maven</b>, <b>Docker</b> e <b>Docker compose</b>.
+Para executar a aplicação, o usuário deve ter instalado no computador <b>Docker</b> e <b>Docker compose</b>.
 Depois de clonar este repositório, o usuário deve executar no terminal o seguinte comando:
 ``` 
 sh server.sh 
 ``` 
 Os comandos utilizados neste arquivo para criar as imagens necessárias para a execução da aplicação foram:
 ``` 
-sudo docker pull openjdk:17-jdk-slim 
-sudo docker pull mongo:latest 
-mvn clean package 
-sudo docker compose build 
-sudo docker compose up -d 
+sudo docker pull mongo:latest
+./mvnw clean package
+sudo docker compose build
+sudo docker compose up -d
 ``` 
 Caso seja necessário, o usuário deve inserir a senha de administrador da máquina onde a aplicação será executada.
 Em seguida o usuário deve aguardar a criação das imagens necessárias para a execução da aplicação. Quando for finalizada, poderá acessar os endpoints da API utilizando o endereço http://localhost:8080/.
+
+Também foi adicionado um cliente do mongoDB para acesso aos dados do banco de dados. O usuário poderá ter acesso ao <b>mongo-express</b> utilizando a porta http://localhost:8081/.
+
+Em seguida será necessário inserir as seguintes credendiais:
+
+User:
+``` 
+admin
+``` 
+Password:
+``` 
+password
+``` 
 
 ## Considerações
 * O aplicativo backend foi encapsulado e pode ser executado usando docker compose.
